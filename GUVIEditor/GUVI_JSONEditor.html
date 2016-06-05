@@ -105,14 +105,26 @@ div textarea{width: 100%;height: 100%;}
  saveDoc.onclick = function () {
     var blob = new Blob([editor.getText()], {type: 'application/json;charset=utf-8'});
 	var control = loadDoc;
-    saveAs(blob, control.files[0].name);
+		
+	 try {
+	var filename = control.files[0].name;
+		  console.log(filename);
+	
+    } catch (e) {
+	  console.log("Setting the filename to document.json\n" );
+    }
+	
+	
+	if ( typeof(filename) === "undefined" && filename === null ) {filename="document.json"}
+	
+    saveAs(blob, filename);
   };
   
   LoadJsonTxtArea.onclick = function () {
    	 var jsontext = JsonTxtArea.value;
 	 
 	 try {
-         editor.setText(jsontext)
+         editor.setText(jsontext);
 		  console.log(jsontext);
 	
     } catch (e) {
