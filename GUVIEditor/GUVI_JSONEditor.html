@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>JSONEditor | Load and save</title>
+
+  <link href="../dist/jsoneditor.css" rel="stylesheet" type="text/css">
+  <link href="./css/darktheme.css" rel="stylesheet" type="text/css">
+
+   
+  <script src="../dist/jsoneditor.js"></script>
+
+  <script src="../dist/filereader.js"></script>
+  <script src="../dist/FileSaver.min.js"></script>
+  
+
+  <style>
+    html, body {
+      font: 11pt sans-serif;
+    }
+	
+	#free_text
+	{
+	 width: 45%;
+	 height:100%;
+	  float:left;
+	}
+	
+	#imp_exp
+	{
+	 
+	 height:100%;
+	  float:left;
+	  margin-left: 10px;
+	  margin-top: 200px;
+	}
+	
+	
+    #jsoneditor {
+      width: 50%;
+	  height:100%;
+	  float:right;
+    }
+	
+	
+	#GUVIcontainer
+	{
+	 width: 100%;
+      height: 400px;
+	}
+	
+
+div textarea{width: 100%;height: 100%;}
+
+  </style>
+</head>
+<body>
+<h1>Load , Edit and save JSON documents</h1>
+<p>
+  Load a JSON document: <input type="file" id="loadDocument" value="Load"/>
+</p>
+<p>
+  Save a JSON document: <input type="button" id="saveDocument" value="Save" />
+</p>
+<div id="GUVIcontainer">
+<div id="free_text"><textarea id="jsonContent" name="test"></textarea></div>
+<div id="imp_exp"><input type="button" id="LoadContent" value=">>"/></div>
+<div id="jsoneditor"></div>
+</div>
+<script>
+  var options = {
+    mode: 'tree',
+    modes: ['code', 'form', 'text', 'tree', 'view'], // allowed modes
+    onError: function (err) {
+      alert(err.toString());
+    },
+    onModeChange: function (newMode, oldMode) {
+      console.log('Mode switched from', oldMode, 'to', newMode);
+    }
+  };
+  
+  
+  
+  // create the editor
+  var container = document.getElementById('jsoneditor');
+
+  var editor = new JSONEditor(container, options);
+  var loadDoc = document.getElementById('loadDocument');
+  var saveDoc =  document.getElementById('saveDocument');
+  var LoadJsonTxtArea = document.getElementById('LoadContent');
+  var JsonTxtArea = document.getElementById('jsonContent')
+  
+  
+  
+  // Load a JSON document
+  FileReaderJS.setupInput(loadDoc, {
+    readAsDefault: 'Text',
+    on: {
+      load: function (event, file) {
+        editor.setText(event.target.result);
+      }
+    }
+  });
+
+  // Save a JSON document
+ saveDoc.onclick = function () {
+    var blob = new Blob([editor.getText()], {type: 'application/json;charset=utf-8'});
+	var control = loadDoc;
+    saveAs(blob, control.files[0].name);
+  };
+  
+  LoadJsonTxtArea.onclick = function () {
+   	 var jsontext = JsonTxtArea.value;
+	 
+	 try {
+         editor.setText(jsontext)
+		  console.log(jsontext);
+	
+    } catch (e) {
+	 alert("JSON parsing error\n" + e);
+	 console.log("JSON parsing error\n" + e);
+	
+    return false;
+    }
+	
+  };
+</script>
+</body>
+</html>
+
+
