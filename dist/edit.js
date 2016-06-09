@@ -2,8 +2,7 @@ function JSONModal() {
 	
 	this.Modal_data = {};
 	this.setValue=function setValue(key,val){
-	this.Modal_data[key] = val;
-        
+	this.Modal_data[key] = val;        
 	}
 	
 	
@@ -22,6 +21,24 @@ function JSONModal() {
 	
 }
 
+function templateEngine(template,json_values)
+{
+	var template_substuited = template;
+	for(var key in json_values)
+	{
+		var template_string = "%" + key + "%";
+		alert(template_string);
+		template_substuited = template_substuited.replace(new RegExp(template_string,'gi'),json_values[key]);
+		alert(template_substuited);
+	}
+	return template_substuited;
+}
+
+function getliTemplate()
+{
+	return "<li style='list-style:none'><span class='display'>%val%</span><input type='text' class='edit' style='display:none' data-bind ='%key%'>";
+	
+}
 
 $(document).ready(function(){
 
@@ -32,12 +49,25 @@ $.getJSON( "sample.json", function( data ) {
    objJSON.setJSONModal(data);
 
   $.each( data, function( key, val ) {
-	  var start = "<li><span class='display'>";
-	  var end = "</span><input type='text' class='edit' style='display:none'  data-key ='";
+	  var template_values = {};
+	  template_values["key"] = key;
+	  template_values["val"] = val;
+	 // var templatestr = "test";
+	  var li_template = getliTemplate();
+	
+	  
+	  var template_substuited = templateEngine(li_template,template_values);
+	  /*
+	  var start = "<li style='list-style:none'><span class='display'>";
+	  var end = "</span><input type='text' class='edit' style='display:none'  data-bind ='";
 	  var endli = "'>";
-	  var li_elem = start + val + end + key + endli ;
-	  console.log(li_elem);
-    items.push( li_elem);
+	  
+	  
+	  
+	
+	  var li_elem = start + val + end + key + endli ;*/
+	  console.log(template_substuited);
+    items.push( template_substuited);
   });
  
   $( "<ul/>", {
@@ -48,16 +78,13 @@ $.getJSON( "sample.json", function( data ) {
 
 
 
-
-
-
 $('body').on('click', 'span.display', function() {
         $(this).hide().siblings(".edit").show().val($(this).text()).focus();
 });
 
 
 $('body').on('focusout', 'input.edit', function() {
-        var key = $(this).data("key");
+        var key = $(this).data("bind");
 		var val = $(this).val();
 		
 		
@@ -68,5 +95,3 @@ $('body').on('focusout', 'input.edit', function() {
 });
 
 });
-
-
